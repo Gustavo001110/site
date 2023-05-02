@@ -5,6 +5,8 @@ from flask import Flask, render_template, url_for, flash, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+import os
+
 
 root_path = Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent
 app = Flask(__name__.split('.')[0], root_path=root_path)
@@ -16,8 +18,12 @@ app = Flask(__name__, template_folder='templates')
 
 
 app.config['SECRET_KEY'] = '36a2bf07169aa5abf0b0df1bc17a3a9f'
+if os.getenv('DATABASE_URL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sla.db'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sla.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 database = SQLAlchemy(app)
